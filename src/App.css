@@ -1,0 +1,5 @@
+@import '~antd/dist/antd.css';
+
+.site-page-header {
+  background-color: white;
+}

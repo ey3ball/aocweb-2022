@@ -1,4 +1,4 @@
-export default function Root() {
+export default function Index() {
   return (
     <>
     <div>
@@ -6,5 +6,5 @@ export default function Root() {
       This project will be used as a playground to get familiar with : React, Antd, and WASM
     </div>
     </>
-  )
+  );
 }

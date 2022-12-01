@@ -26,8 +26,8 @@ const router = createBrowserRouter([
         element: <Day01 />
       }
     ]
-  }
-]);
+  },
+], {basename: process.env.PUBLIC_URL});
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

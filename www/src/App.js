@@ -3,7 +3,11 @@ import './App.css';
 import AocMenu from './AocMenu.js';
 import { Outlet } from "react-router-dom";
 
+import * as wasm from "aocwasm";
+
 const { Header, Sider, Content } = Layout;
+
+wasm.greet()
 
 function App() {
   return (

@@ -29,12 +29,15 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           cache: 'yarn'
-      - run: yarn install
-      - run: CI=false yarn build
+          cache-dependency-path: 'www/yarn.lock'
+      - uses: jetli/wasm-pack-action@v0.4.0
+      - run: wasm-pack build
+      - run: cd www && yarn install
+      - run: cd www && CI=false yarn build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: ./build
+          path: ./www/build
 
   # Deployment job
   deploy:

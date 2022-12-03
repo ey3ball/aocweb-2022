@@ -1,3 +1,5 @@
+use aoclib::hello;
+
 mod utils;
 
 use wasm_bindgen::prelude::*;
@@ -15,5 +17,6 @@ extern {
 
 #[wasm_bindgen]
 pub fn greet() {
-    alert("Hello, aocweb!");
+    let message = hello();
+    alert(&format!("Hello ?? {}, aocweb!", message));
 }

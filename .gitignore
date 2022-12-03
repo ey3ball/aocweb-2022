@@ -1,4 +1,6 @@
 /target
+/aocbin/target
+/aoclib/target
 **/*.rs.bk
 Cargo.lock
 bin/

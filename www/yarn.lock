@@ -2657,8 +2657,9 @@ anymatch@^3.0.3, anymatch@~3.1.2:
     normalize-path "^3.0.0"
     picomatch "^2.0.4"
 
-aocwasm@../pkg:
-  version "0.1.0"
+"aocwasm@link:../pkg":
+  version "0.0.0"
+  uid ""
 
 arg@^4.1.0:
   version "4.1.3"

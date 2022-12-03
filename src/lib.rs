@@ -11,7 +11,7 @@ use wasm_bindgen::prelude::*;
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 #[wasm_bindgen]
-extern {
+extern "C" {
     fn alert(s: &str);
 }
 
@@ -20,3 +20,5 @@ pub fn greet() {
     let message = hello();
     alert(&format!("Hello ?? {}, aocweb!", message));
 }
+
+pub use aoclib::day01;

@@ -8,6 +8,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import Day01 from './routes/Day01.js';
+import Day02 from './routes/Day02.js';
 import Index from "./routes/Index.js";
 import ErrorPage from './Error404.js';
 
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
       {
         path: "/day/01",
         element: <Day01 />
+      },
+      {
+        path: "/day/02",
+        element: <Day02 />
       }
     ]
   },

@@ -10,7 +10,8 @@ import * as wasm from "aocwasm";
 
 const { Header, Sider, Content } = Layout;
 
-wasm.greet()
+console.log(wasm)
+console.log(wasm.Day01)
 
 function App() {
   return (

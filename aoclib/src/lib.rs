@@ -1,11 +1,12 @@
 pub mod day01;
+pub mod day04;
 
 pub fn add(left: usize, right: usize) -> usize {
     left + right
 }
 
 pub fn hello() -> String {
-    " from aoclib :) ".to_string()
+    " from aoclib ".to_string()
 }
 
 #[cfg(test)]

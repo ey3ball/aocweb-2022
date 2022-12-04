@@ -4,13 +4,18 @@ pub struct Day04 {
     sections: Vec<(Section, Section)>,
 }
 
-fn contained(first: &Section, second: &Section) -> bool {
-    (first.contains(second.start()) && first.contains(second.end()))
-        || (second.contains(first.start()) && second.contains(first.end()))
+trait ExtendedRange {
+    fn contained(&self, other: &Self) -> bool;
+    fn overlaps(&self, other: &Self) -> bool;
 }
 
-fn overlap(first: &Section, second: &Section) -> bool {
-    second.clone().any(|i| first.contains(&i))
+impl ExtendedRange for Section {
+    fn contained(&self, other: &Self)  -> bool {
+        other.contains(&self.start()) && other.contains(&self.end())
+    }
+    fn overlaps(&self, other: &Self) -> bool {
+        self.clone().any(|i| other.contains(&i))
+    }
 }
 
 impl Day04 {
@@ -29,13 +34,13 @@ impl Day04 {
 
     pub fn part1(&self) -> usize {
         self.sections.iter()
-                .filter(|(s1,s2)| contained(s1, s2))
+                .filter(|(s1,s2)| s1.contained(s2) || s2.contained(s1))
                 .count()
     }
 
     pub fn part2(&self) -> usize {
         self.sections.iter()
-                .filter(|(s1,s2)| overlap(s1, s2))
+                .filter(|(s1,s2)| s1.overlaps(s2))
                 .count()
     }
 }

@@ -8,3 +8,4 @@ wasm = ["dep:wasm-bindgen"]
 
 [dependencies]
 wasm-bindgen = { version = "0.2.63", optional = true }
+regex = "1"

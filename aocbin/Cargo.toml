@@ -13,5 +13,10 @@ path = "src/day01.rs"    # The source file of the target.
 name = "day04"           # The name of the target.
 path = "src/day04.rs"    # The source file of the target.
 
+[[bin]]
+name = "day05"           # The name of the target.
+path = "src/day05.rs"    # The source file of the target.
+
 [dependencies]
 aoclib = { path = "../aoclib" }
+regex = "1"

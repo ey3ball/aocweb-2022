@@ -1,6 +1,5 @@
 use std::collections::HashSet;
 
-type Input = String;
 type RuckSack = (HashSet<char>, HashSet<char>);
 
 pub struct Day03 {

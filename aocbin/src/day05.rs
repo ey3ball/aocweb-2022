@@ -6,31 +6,35 @@ fn parse(input: &str) -> Input {
 
     let stacks_count = 1 + ((state.lines().next().unwrap().len() - 1) / 4);
     let mut stacks: Vec<Vec<char>> = vec![vec![]; stacks_count];
-    state.lines()
-         .rev()
-         .skip(1)
-         .map(|l| {
-            l
-                .chars()
+    state
+        .lines()
+        .rev()
+        .skip(1)
+        .map(|l| {
+            l.chars()
                 .skip(1)
                 .step_by(4)
                 .enumerate()
                 .map(|c| {
                     match c {
-                        (_i,  ' ') => (),
+                        (_i, ' ') => (),
                         (i, crate_) => stacks[i].push(crate_),
                     };
                 })
                 .for_each(drop)
-            })
-            .for_each(drop);
+        })
+        .for_each(drop);
 
     let re = Regex::new(r"move (\d+) from (\d+) to (\d+)").unwrap();
-    let instructions: Vec<Vec<usize>> = 
-        instructions
+    let instructions: Vec<Vec<usize>> = instructions
         .lines()
         .map(|l| {
-            re.captures(l).unwrap().iter().skip(1).map(|c| c.unwrap().as_str().parse().unwrap()).collect()
+            re.captures(l)
+                .unwrap()
+                .iter()
+                .skip(1)
+                .map(|c| c.unwrap().as_str().parse().unwrap())
+                .collect()
         })
         .collect();
 
@@ -50,9 +54,7 @@ fn part1(input: &Input) -> String {
         }
     }
 
-    state.iter()
-         .map(|s| s.last().unwrap().to_owned())
-         .collect()
+    state.iter().map(|s| s.last().unwrap().to_owned()).collect()
 }
 
 fn part2(input: &Input) -> String {
@@ -67,9 +69,7 @@ fn part2(input: &Input) -> String {
         }
     }
 
-    state.iter()
-         .map(|s| s.last().unwrap().to_owned())
-         .collect()
+    state.iter().map(|s| s.last().unwrap().to_owned()).collect()
 }
 
 fn main() {

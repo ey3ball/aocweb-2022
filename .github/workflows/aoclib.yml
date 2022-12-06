@@ -1,0 +1,17 @@
+name: Build and test core aoc library
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build_and_test:
+    name: AocLib tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - run: cd aoclib && cargo build
+      - run: cd aoclib && cargo test

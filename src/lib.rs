@@ -1,14 +1,6 @@
-use aoclib::hello;
-
 mod utils;
-
 use wasm_bindgen::prelude::*;
-
-// When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
-// allocator.
-#[cfg(feature = "wee_alloc")]
-#[global_allocator]
-static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+use aoclib::hello;
 
 #[wasm_bindgen]
 extern "C" {
@@ -22,3 +14,4 @@ pub fn greet() {
 }
 
 pub use aoclib::day01;
+pub use utils::set_panic_hook;

@@ -10,8 +10,7 @@ import * as wasm from "aocwasm";
 
 const { Header, Sider, Content } = Layout;
 
-console.log(wasm)
-console.log(wasm.Day01)
+wasm.set_panic_hook();
 
 function App() {
   return (

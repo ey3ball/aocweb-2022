@@ -2,6 +2,9 @@
   padding: 20px;
 }
 
+.page-content {
+  padding: 10px;
+}
 .site-page-header {
   background-color: white;
 }

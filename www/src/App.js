@@ -19,7 +19,7 @@ function App() {
     <PageHeader className="site-page-header" title="AoC Web 2022 !" />
     <Layout>
       <Sider><AocMenu /></Sider>
-      <Content>
+      <Content className="page-content">
         <Outlet />
       </Content>
     </Layout>

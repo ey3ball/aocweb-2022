@@ -1,6 +1,6 @@
 import React from 'react';
 import { Menu } from 'antd';
-import { Outlet, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 // works when >=4.20.0, recommended ✅
 const items = [

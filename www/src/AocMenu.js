@@ -7,7 +7,7 @@ const items = [
   { label: (<Link to ="/">README</Link>), key: 'home' },
   { label: (<Link to="/day/01">Day 1</Link>), key: 'day-01' },
   { label: (<Link to="/day/02">Day 2</Link>), key: 'day-02' },
-  { label: '...', key: 'day-02' },
+  { label: '...', key: 'day-xx' },
 ];
 
 class AocMenu extends React.Component {

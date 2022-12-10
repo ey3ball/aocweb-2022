@@ -1,3 +1,5 @@
+use pathfinding::grid::Grid;
+
 #[derive(Debug)]
 enum Inst {
     AddX(isize),
@@ -49,13 +51,34 @@ impl Day10 {
             .take(220)
             .skip(19)
             .step_by(40)
-            .inspect(|(cnt, x)| println!("{}: {}", cnt + 1, x))
+//            .inspect(|(cnt, x)| println!("{}: {}", cnt + 1, x))
             .map(|(cnt, x)| (cnt + 1) as isize * x)
             .sum()
     }
 
-    pub fn part2(&self) -> usize {
-        0
+    pub fn part2(&self) -> String {
+        const SCREEN_WIDTH: usize = 40;
+        let drawn = self.input
+            .iter()
+            .scan(1, |x, inst| {
+                match inst {
+                    Inst::Noop => Some(*x),
+                    Inst::AddX(v) => {
+                        *x += v;
+                        Some(*x - v)
+                    }
+                }
+            })
+            .enumerate()
+            .filter_map(|(cycle, x)|
+                if (x-1..=x+1).contains(&((cycle % SCREEN_WIDTH) as isize)) {
+                    Some((cycle % SCREEN_WIDTH, cycle / SCREEN_WIDTH))
+                } else {
+                    None
+                }
+            )
+            .collect::<Grid>();
+        format!("{:?}", drawn)
     }
 }
 
@@ -213,6 +236,12 @@ noop
 noop
 noop";
 
+    const RESULT: &str = "##..##..##..##..##..##..##..##..##..##..
+###...###...###...###...###...###...###.
+####....####....####....####....####....
+#####.....#####.....#####.....#####.....
+######......######......######......####
+#######.......#######.......#######.....";
     #[test]
     fn solve() {
         let parse = Day10::parse(SAMPLE);
@@ -222,8 +251,7 @@ noop";
     #[test]
     fn solve_2() {
         let parse = Day10::parse(SAMPLE_2);
-        println!("{:?}", parse);
         assert_eq!(parse.part1(), 13140);
-        assert_eq!(parse.part2(), 0);
+        assert_eq!(parse.part2(), RESULT);
     }
 }

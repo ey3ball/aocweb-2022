@@ -66,7 +66,29 @@ impl Day08 {
     }
 
     pub fn part2(&self) -> usize {
-        0
+        let matrix = &self.input;
+        matrix
+            .indices()
+            .map(|pos| {
+                [(0,1),(0,-1),(1,0),(-1,0)]
+                    .iter()
+                    .map(move |&dir| {
+                        match matrix
+                                .in_direction(pos, dir)
+                                .try_fold(0, |dst, neigh| {
+                                    if matrix[neigh] < matrix[pos] {
+                                        Ok(dst + 1)
+                                    } else {
+                                        Err(dst + 1)
+                                    }
+                                }) {
+                            Ok(dst) => dst,
+                            Err(dst) => dst
+                        }
+                    })
+                    .product::<usize>()
+            })
+            .max().unwrap()
     }
 }
 
@@ -84,5 +106,11 @@ mod tests {
     fn test_part1() {
         let parse = Day08::parse(SAMPLE);
         assert_eq!(parse.part1(), 21);
+    }
+
+    #[test]
+    fn test_part2() {
+        let parse = Day08::parse(SAMPLE);
+        assert_eq!(parse.part2(), 8);
     }
 }

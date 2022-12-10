@@ -1,5 +1,6 @@
 use std::collections::HashSet;
 type Input = Vec<(isize, isize)>;
+type Pos = (isize, isize);
 
 pub struct Day09 {
     input: Input,
@@ -30,21 +31,26 @@ impl Day09 {
         }
     }
 
+    pub fn knot_move(new_head: Pos, head: Pos, tail: Pos) -> Pos {
+        let move_: Pos = (new_head.0 - head.0, new_head.1 - head.1);
+        if (new_head.0 - tail.0).abs() == 2 && (new_head.1 - tail.1).abs() == 2 {
+            (tail.0 + move_.0, tail.1 + move_.1)
+        } else if (new_head.0 - tail.0).abs() == 2 {
+            (tail.0 + move_.0, new_head.1)
+        } else if (new_head.1 - tail.1).abs() == 2 {
+            (new_head.0, tail.1 + move_.1)
+        } else {
+            tail
+        }
+    }
+
     pub fn part1(&self) -> usize {
         let mut visited: HashSet<(isize, isize)> = HashSet::new();
         self.input
             .iter()
             .fold(((0,0),(0,0)), |(head, tail), move_| {
                 let new_head = (head.0 + move_.0, head.1 + move_.1);
-                let new_tail = if head == tail || new_head == tail {
-                    tail
-                } else if (new_head.0 - tail.0).abs() == 2 {
-                    (tail.0 + move_.0, new_head.1)
-                } else if (new_head.1 - tail.1).abs() == 2 {
-                    (new_head.0, tail.1 + move_.1)
-                } else {
-                    tail
-                };
+                let new_tail = Self::knot_move(new_head, head, tail);
                 visited.insert(new_tail);
                 (new_head, new_tail)
             });
@@ -52,7 +58,23 @@ impl Day09 {
     }
 
     pub fn part2(&self) -> usize {
-        0
+        let mut visited: HashSet<(isize, isize)> = HashSet::new();
+        self.input
+            .iter()
+            .fold(vec![(0,0); 10], |hts, move_| {
+                let mut new_head = (hts[0].0 + move_.0, hts[0].1 + move_.1);
+                let mut new_hts = vec![];
+                new_hts.push(new_head);
+                for head_tail in hts.windows(2) {
+                    let new_tail = Self::knot_move(new_head, head_tail[0], head_tail[1]);
+                    new_hts.push(new_tail);
+                    new_head = new_tail;
+                }
+                visited.insert(*new_hts.last().unwrap());
+                new_hts
+            });
+        println!("{:?}", visited);
+        visited.iter().count()
     }
 }
 
@@ -70,9 +92,14 @@ L 5
 R 2";
 
     #[test]
-    fn solve() {
+    fn solve_p1() {
         let parse = Day09::parse(SAMPLE);
         assert_eq!(parse.part1(), 13);
-        assert_eq!(parse.part2(), 0);
+    }
+
+    #[test]
+    fn solve_p2() {
+        let parse = Day09::parse(SAMPLE);
+        assert_eq!(parse.part2(), 1);
     }
 }

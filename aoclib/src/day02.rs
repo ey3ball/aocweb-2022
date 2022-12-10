@@ -9,7 +9,7 @@ impl Day02 {
         Day02 {
             input: input
                 .lines()
-                .map(|l| (l.chars().nth(0).unwrap(), l.chars().nth(2).unwrap()))
+                .map(|l| (l.chars().next().unwrap(), l.chars().nth(2).unwrap()))
                 .collect(),
         }
     }
@@ -73,7 +73,7 @@ impl Day02 {
 mod tests {
     use super::*;
 
-    const SAMPLE: &'static str = "A Y
+    const SAMPLE: &str = "A Y
 B X
 C Z";
 

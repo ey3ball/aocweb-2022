@@ -23,7 +23,7 @@ impl Day03 {
     }
 
     pub fn priority(c: char) -> usize {
-        if c >= 'A' && c <= 'Z' {
+        if ('A'..='Z').contains(&c) {
             (c as u8 - b'A') as usize + 27
         } else {
             (c as u8 - b'a') as usize + 1
@@ -63,7 +63,7 @@ impl Day03 {
 mod tests {
     use super::*;
 
-    const SAMPLE: &'static str = "vJrwpWtwJgWrhcsFMMfFFhFp
+    const SAMPLE: &str = "vJrwpWtwJgWrhcsFMMfFFhFp
 jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
 PmmdzqPrVvPwwTWBwg
 wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn

@@ -3,7 +3,7 @@ use pathfinding::grid::Grid;
 #[derive(Debug)]
 enum Inst {
     AddX(isize),
-    Noop
+    Noop,
 }
 
 type Input = Vec<Inst>;
@@ -21,7 +21,10 @@ impl Day10 {
                 if l.starts_with("noop") {
                     vec![Inst::Noop]
                 } else if l.starts_with("addx") {
-                    vec![Inst::Noop, Inst::AddX(l.split_once(" ").unwrap().1.parse().unwrap())]
+                    vec![
+                        Inst::Noop,
+                        Inst::AddX(l.split_once(' ').unwrap().1.parse().unwrap()),
+                    ]
                 } else {
                     panic!()
                 }
@@ -29,54 +32,49 @@ impl Day10 {
             .collect();
         parsed.push(Inst::Noop);
 
-        Day10 {
-            input: parsed
-        }
+        Day10 { input: parsed }
     }
 
     pub fn part1(&self) -> isize {
         self.input
             .iter()
-            .scan(1, |x, inst| {
-                match inst {
-                    Inst::Noop => Some(*x),
-                    Inst::AddX(v) => {
-                        *x += v;
-                        Some(*x - v)
-                    }
+            .scan(1, |x, inst| match inst {
+                Inst::Noop => Some(*x),
+                Inst::AddX(v) => {
+                    *x += v;
+                    Some(*x - v)
                 }
             })
             .enumerate()
-//            .inspect(|(cnt, x)| println!("{}: {}", cnt + 1, x))
+            //            .inspect(|(cnt, x)| println!("{}: {}", cnt + 1, x))
             .take(220)
             .skip(19)
             .step_by(40)
-//            .inspect(|(cnt, x)| println!("{}: {}", cnt + 1, x))
+            //            .inspect(|(cnt, x)| println!("{}: {}", cnt + 1, x))
             .map(|(cnt, x)| (cnt + 1) as isize * x)
             .sum()
     }
 
     pub fn part2(&self) -> String {
         const SCREEN_WIDTH: usize = 40;
-        let drawn = self.input
+        let drawn = self
+            .input
             .iter()
-            .scan(1, |x, inst| {
-                match inst {
-                    Inst::Noop => Some(*x),
-                    Inst::AddX(v) => {
-                        *x += v;
-                        Some(*x - v)
-                    }
+            .scan(1, |x, inst| match inst {
+                Inst::Noop => Some(*x),
+                Inst::AddX(v) => {
+                    *x += v;
+                    Some(*x - v)
                 }
             })
             .enumerate()
-            .filter_map(|(cycle, x)|
-                if (x-1..=x+1).contains(&((cycle % SCREEN_WIDTH) as isize)) {
+            .filter_map(|(cycle, x)| {
+                if (x - 1..=x + 1).contains(&((cycle % SCREEN_WIDTH) as isize)) {
                     Some((cycle % SCREEN_WIDTH, cycle / SCREEN_WIDTH))
                 } else {
                     None
                 }
-            )
+            })
             .collect::<Grid>();
         format!("{:?}", drawn)
     }
@@ -86,10 +84,10 @@ impl Day10 {
 mod tests {
     use super::*;
 
-    const SAMPLE: &'static str = "noop
+    const SAMPLE: &str = "noop
 addx 3
 addx -5";
-    const SAMPLE_2: &'static str = "addx 15
+    const SAMPLE_2: &str = "addx 15
 addx -11
 addx 6
 addx -3

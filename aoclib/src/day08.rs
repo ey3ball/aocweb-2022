@@ -13,48 +13,51 @@ impl Day08 {
             .flat_map(|l| l.chars().map(|c| c.to_digit(10).unwrap() as u8))
             .collect();
         Day08 {
-            input: Matrix::square_from_vec(data).unwrap()
+            input: Matrix::square_from_vec(data).unwrap(),
         }
     }
 
     pub fn left(matrix: &Input) -> Vec<Vec<(usize, usize)>> {
         (0..matrix.rows)
-            .map(|y| (0..matrix.columns).map(move |x| (x,y)).collect())
+            .map(|y| (0..matrix.columns).map(move |x| (x, y)).collect())
             .collect()
     }
 
     pub fn right(matrix: &Input) -> Vec<Vec<(usize, usize)>> {
         (0..matrix.rows)
-            .map(|y| (0..matrix.columns).rev().map(move |x| (x,y)).collect())
+            .map(|y| (0..matrix.columns).rev().map(move |x| (x, y)).collect())
             .collect()
     }
 
     pub fn top(matrix: &Input) -> Vec<Vec<(usize, usize)>> {
         (0..matrix.columns)
-            .map(|x| (0..matrix.rows).map(move |y| (x,y)).collect())
+            .map(|x| (0..matrix.rows).map(move |y| (x, y)).collect())
             .collect()
     }
 
     pub fn bottom(matrix: &Input) -> Vec<Vec<(usize, usize)>> {
         (0..matrix.columns)
-            .map(|x| (0..matrix.rows).rev().map(move |y| (x,y)).collect())
+            .map(|x| (0..matrix.rows).rev().map(move |y| (x, y)).collect())
             .collect()
     }
 
     pub fn observe(tracker: &mut HashSet<usize>, matrix: &Input) {
-        for view in [Self::left(&matrix), Self::right(&matrix), Self::top(&matrix), Self::bottom(&matrix)] {
-            view
-                .iter()
-                .for_each(|dir| {
-                    dir
-                        .iter()
-                        .fold(None, |max, &pos| if max.is_none() || matrix[pos] > max.unwrap() {
-                            tracker.insert(matrix.idx(pos));
-                            Some(matrix[pos])
-                        } else {
-                            max
-                        });
+        for view in [
+            Self::left(matrix),
+            Self::right(matrix),
+            Self::top(matrix),
+            Self::bottom(matrix),
+        ] {
+            view.iter().for_each(|dir| {
+                dir.iter().fold(None, |max, &pos| {
+                    if max.is_none() || matrix[pos] > max.unwrap() {
+                        tracker.insert(matrix.idx(pos));
+                        Some(matrix[pos])
+                    } else {
+                        max
+                    }
                 });
+            });
         }
     }
 
@@ -62,7 +65,7 @@ impl Day08 {
         let mut matrix = self.input.clone();
         let mut visible: HashSet<usize> = HashSet::new();
         Self::observe(&mut visible, &mut matrix);
-        visible.iter().count()
+        visible.len()
     }
 
     pub fn part2(&self) -> usize {
@@ -70,25 +73,24 @@ impl Day08 {
         matrix
             .indices()
             .map(|pos| {
-                [(0,1),(0,-1),(1,0),(-1,0)]
+                [(0, 1), (0, -1), (1, 0), (-1, 0)]
                     .iter()
                     .map(move |&dir| {
-                        match matrix
-                                .in_direction(pos, dir)
-                                .try_fold(0, |dst, neigh| {
-                                    if matrix[neigh] < matrix[pos] {
-                                        Ok(dst + 1)
-                                    } else {
-                                        Err(dst + 1)
-                                    }
-                                }) {
+                        match matrix.in_direction(pos, dir).try_fold(0, |dst, neigh| {
+                            if matrix[neigh] < matrix[pos] {
+                                Ok(dst + 1)
+                            } else {
+                                Err(dst + 1)
+                            }
+                        }) {
                             Ok(dst) => dst,
-                            Err(dst) => dst
+                            Err(dst) => dst,
                         }
                     })
                     .product::<usize>()
             })
-            .max().unwrap()
+            .max()
+            .unwrap()
     }
 }
 
@@ -96,7 +98,7 @@ impl Day08 {
 mod tests {
     use super::*;
 
-    const SAMPLE: &'static str = "30373
+    const SAMPLE: &str = "30373
 25512
 65332
 33549

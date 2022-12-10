@@ -1,6 +1,6 @@
 mod utils;
-use wasm_bindgen::prelude::*;
 use aoclib::hello;
+use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {

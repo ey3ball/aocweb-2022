@@ -31,11 +31,11 @@ impl Day06 {
     }
 
     pub fn part1(&self) -> usize {
-        return self.find_marker(4);
+        self.find_marker(4)
     }
 
     pub fn part2(&self) -> usize {
-        return self.find_marker(14);
+        self.find_marker(14)
     }
 }
 
@@ -43,11 +43,11 @@ impl Day06 {
 mod tests {
     use super::*;
 
-    const SAMPLE: &'static str = "mjqjpqmgbljsphdztnvjfqwrcgsmlb";
-    const SAMPLE_2: &'static str = "bvwbjplbgvbhsrlpgdmjqwftvncz";
-    const SAMPLE_3: &'static str = "nppdvjthqldpwncqszvftbrmjlhg";
-    const SAMPLE_4: &'static str = "nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg";
-    const SAMPLE_5: &'static str = "zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw";
+    const SAMPLE: &str = "mjqjpqmgbljsphdztnvjfqwrcgsmlb";
+    const SAMPLE_2: &str = "bvwbjplbgvbhsrlpgdmjqwftvncz";
+    const SAMPLE_3: &str = "nppdvjthqldpwncqszvftbrmjlhg";
+    const SAMPLE_4: &str = "nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg";
+    const SAMPLE_5: &str = "zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw";
 
     #[test]
     fn part1() {

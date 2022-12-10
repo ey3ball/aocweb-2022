@@ -11,7 +11,7 @@ trait ExtendedRange {
 
 impl ExtendedRange for Section {
     fn contained(&self, other: &Self) -> bool {
-        other.contains(&self.start()) && other.contains(&self.end())
+        other.contains(self.start()) && other.contains(self.end())
     }
     fn overlaps(&self, other: &Self) -> bool {
         self.clone().any(|i| other.contains(&i))
@@ -25,8 +25,8 @@ impl Day04 {
                 .lines()
                 .map(|l| {
                     let parsed: Vec<usize> = l
-                        .split(",")
-                        .flat_map(|e| e.split("-").map(|num| num.parse().unwrap()))
+                        .split(',')
+                        .flat_map(|e| e.split('-').map(|num| num.parse().unwrap()))
                         .collect();
                     ((parsed[0]..=parsed[1]), (parsed[2]..=parsed[3]))
                 })

@@ -32,6 +32,6 @@ impl Day01 {
         sum_supplies.sort();
 
         let end = sum_supplies.len();
-        return sum_supplies[end - 1] + sum_supplies[end - 2] + sum_supplies[end - 3];
+        sum_supplies[end - 1] + sum_supplies[end - 2] + sum_supplies[end - 3]
     }
 }

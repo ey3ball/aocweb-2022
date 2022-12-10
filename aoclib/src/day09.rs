@@ -73,7 +73,6 @@ impl Day09 {
                 visited.insert(*new_hts.last().unwrap());
                 new_hts
             });
-        println!("{:?}", visited);
         visited.iter().count()
     }
 }
@@ -91,6 +90,15 @@ D 1
 L 5
 R 2";
 
+    const SAMPLE_2: &'static str = "R 5
+U 8
+L 8
+D 3
+R 17
+D 10
+L 25
+U 20";
+
     #[test]
     fn solve_p1() {
         let parse = Day09::parse(SAMPLE);
@@ -101,5 +109,11 @@ R 2";
     fn solve_p2() {
         let parse = Day09::parse(SAMPLE);
         assert_eq!(parse.part2(), 1);
+    }
+
+    #[test]
+    fn solve_p2b() {
+        let parse = Day09::parse(SAMPLE_2);
+        assert_eq!(parse.part2(), 36);
     }
 }

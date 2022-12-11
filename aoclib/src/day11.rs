@@ -86,7 +86,7 @@ impl WorryOp {
     pub fn exec(&self, old: usize) -> usize {
         match self {
             WorryOp::Add(x) => old + x,
-            WorryOp::Mul(x) => old + x,
+            WorryOp::Mul(x) => old * x,
             WorryOp::Square => old * old
         }
     }
@@ -125,19 +125,21 @@ impl Day11 {
 
     pub fn part1(&self) -> usize {
         let mut state = self.input.clone();
-        for _round in 0..20 {
+        let mut business: Vec<usize> = vec![0; state.len()];
+        for _round in 0..=19 {
             println!("round {}", _round);
             for m in 0..state.len() {
                 println!("\tm{} {}", m, state[m]);
             }
+            println!("\tbusiness {:?}", business);
             for m in 0..state.len() {
                 let sent = state[m].inspect();
-                let inspected = sent.len();
+                business[m] += sent.len();
                 sent.iter().for_each(|&(target, worry)| state[target].send(worry))
             }
         }
-            
-        0
+        business.sort();
+        business.iter().rev().take(2).product()
     }
 
     pub fn part2(&self) -> usize {

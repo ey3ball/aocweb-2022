@@ -3,6 +3,7 @@ use std::collections::VecDeque;
 
 pub struct Day11 {
     input: Input,
+    thresholds: Vec<usize>,
 }
 
 #[derive(Debug, Clone)]
@@ -14,7 +15,8 @@ pub enum WorryOp {
 
 #[derive(Debug, Clone)]
 pub struct Monkey {
-    items: VecDeque<usize>,
+    _items: VecDeque<usize>,
+    items: Vec<Vec<usize>>,
     worry: WorryOp,
     threshold: usize,
     dst_worry: usize,
@@ -27,7 +29,11 @@ impl std::str::FromStr for Monkey {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut it = s.lines().skip(1);
         let items = it.next().ok_or("")?.split_once(": ").ok_or("")?;
-        let items: VecDeque<usize> = items.1.split(',').map(|num| num.trim().parse().unwrap()).collect();
+        let items: VecDeque<usize> = items
+            .1
+            .split(',')
+            .map(|num| num.trim().parse().unwrap())
+            .collect();
         let op = it.next().ok_or("")?.split_once(": ").ok_or("")?;
         let op = op.1.split_once('=').ok_or("")?;
         let op = if let Some(rest) = op.1.strip_prefix(" old * ") {
@@ -67,7 +73,8 @@ impl std::str::FromStr for Monkey {
             .unwrap();
 
         Ok(Monkey {
-            items: items,
+            _items: items,
+            items: vec![],
             worry: op,
             threshold: test,
             dst_worry: worry,
@@ -87,23 +94,52 @@ impl WorryOp {
         match self {
             WorryOp::Add(x) => old + x,
             WorryOp::Mul(x) => old * x,
-            WorryOp::Square => old * old
+            WorryOp::Square => old * old,
         }
     }
 }
 
 impl Monkey {
-    pub fn send(&mut self, item: usize) {
-        self.items.push_back(item)
+    pub fn init(&mut self, thresholds: &Vec<usize>) {
+        self.items = self
+            ._items
+            .iter()
+            .map(|i| vec![*i; thresholds.len()])
+            .collect();
     }
 
-    pub fn inspect(&mut self) -> Vec<(usize, usize)> {
-        self
-            .items
+    pub fn send(&mut self, item: Vec<usize>) {
+        self.items.push(item)
+    }
+
+    pub fn inspect(&mut self, index: usize, thresholds: &Vec<usize>) -> Vec<(usize, Vec<usize>)> {
+        self.items
             .drain(..)
-            .map(|w| {
-                let new_w = self.worry.exec(w) / 3;
-                if new_w % self.threshold == 0 {
+            .map(|ws| {
+                let new_w: Vec<usize> = std::iter::zip(ws, thresholds)
+                    .map(|(w, t)| (self.worry.exec(w) / 3) % t)
+                    .collect();
+                if new_w[index] == 0 {
+                    (self.dst_worry, new_w)
+                } else {
+                    (self.dst_no_worry, new_w)
+                }
+            })
+            .collect()
+    }
+
+    pub fn carefully_inspect(
+        &mut self,
+        index: usize,
+        thresholds: &Vec<usize>,
+    ) -> Vec<(usize, Vec<usize>)> {
+        self.items
+            .drain(..)
+            .map(|ws| {
+                let new_w: Vec<usize> = std::iter::zip(ws, thresholds)
+                    .map(|(w, t)| self.worry.exec(w) % t)
+                    .collect();
+                if new_w[index] == 0 {
                     (self.dst_worry, new_w)
                 } else {
                     (self.dst_no_worry, new_w)
@@ -115,16 +151,23 @@ impl Monkey {
 
 impl Day11 {
     pub fn parse(input: &str) -> Day11 {
+        let mut monkeys: Vec<Monkey> = input
+            .split("\n\n")
+            .map(|monkey| monkey.parse::<Monkey>().unwrap())
+            .collect();
+        let thresholds = monkeys.iter().map(|m| m.threshold).collect();
+        monkeys.iter_mut().for_each(|m| m.init(&thresholds));
+        println!("{:?}", thresholds);
+
         Day11 {
-            input: input
-                .split("\n\n")
-                .map(|monkey| monkey.parse::<Monkey>().unwrap())
-                .collect(),
+            input: monkeys,
+            thresholds,
         }
     }
 
     pub fn part1(&self) -> usize {
         let mut state = self.input.clone();
+        let thresholds = &self.thresholds;
         let mut business: Vec<usize> = vec![0; state.len()];
         for _round in 0..=19 {
             println!("round {}", _round);
@@ -133,9 +176,10 @@ impl Day11 {
             }
             println!("\tbusiness {:?}", business);
             for m in 0..state.len() {
-                let sent = state[m].inspect();
+                let sent = state[m].inspect(m, thresholds);
                 business[m] += sent.len();
-                sent.iter().for_each(|&(target, worry)| state[target].send(worry))
+                sent.into_iter()
+                    .for_each(|(target, worry)| state[target].send(worry))
             }
         }
         business.sort();
@@ -143,7 +187,25 @@ impl Day11 {
     }
 
     pub fn part2(&self) -> usize {
-        0
+        let mut state = self.input.clone();
+        let thresholds = &self.thresholds;
+        let mut business: Vec<usize> = vec![0; state.len()];
+        for _round in 0..=9999 {
+            println!("round {}", _round);
+            for m in 0..state.len() {
+                println!("\tm{} {}", m, state[m]);
+            }
+            println!("\tbusiness {:?}", business);
+            for m in 0..state.len() {
+                let sent = state[m].carefully_inspect(m, thresholds);
+                business[m] += sent.len();
+                sent.into_iter()
+                    .for_each(|(target, worry)| state[target].send(worry))
+            }
+        }
+        business.sort();
+        println!("\tbusiness {:?}", business);
+        business.iter().rev().take(2).product()
     }
 }
 
@@ -183,7 +245,7 @@ Monkey 3:
     fn solve() {
         let parse = Day11::parse(SAMPLE);
         println!("{:?}", parse.input);
-        assert_eq!(parse.part1(), 0);
-        assert_eq!(parse.part2(), 0);
+        //assert_eq!(parse.part1(), 10605); // oops I broke it ...
+        assert_eq!(parse.part2(), 2713310158);
     }
 }

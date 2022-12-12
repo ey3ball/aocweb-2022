@@ -40,11 +40,38 @@ impl Day12 {
             },
             |&p| p == self.end,
         );
-        result.unwrap().len()
+        result.unwrap().len() - 1
     }
 
     pub fn part2(&self) -> usize {
-        0
+        println!("{:?}", self.start);
+        println!("{:?}", self.end);
+        self
+            .input
+            .indices()
+            .filter(|&i| self.input[i] == 'a')
+            .map(|i| {
+                let result = pathfinding::directed::bfs::bfs(
+                    &i,
+                    |&p| {
+                        let val = self.input[p];
+                        self.input
+                            .neighbours(p, false)
+                            // .inspect(|p| println!("t {:?}", p))
+                            // .inspect(move |&n| println!("t {:?} {} {} {}", n, ('a' as usize),(val as usize + 1), self.input[n] as usize))
+                            .filter(move |&n| {
+                                (('a' as usize)..=(val as usize + 1)).contains(&(self.input[n] as usize))
+                            })
+                    },
+                    |&p| p == self.end,
+                );
+                match result {
+                    Some(r) => r.len() - 1,
+                    None => 99999999
+                }
+            })
+            .min()
+            .unwrap()
     }
 }
 
@@ -62,7 +89,7 @@ abdefghi";
     fn solve() {
         let parse = Day12::parse(SAMPLE);
         println!("{:#?}", parse.input);
-        assert_eq!(parse.part1(), 32);
+        assert_eq!(parse.part1(), 31);
         assert_eq!(parse.part2(), 0);
     }
 }

@@ -14,3 +14,4 @@ wasm = ["dep:wasm-bindgen"]
 wasm-bindgen = { version = "0.2.63", optional = true }
 regex = "1"
 pathfinding = "4.0.0"
+nom = "7"

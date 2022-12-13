@@ -46,8 +46,7 @@ impl Day12 {
     pub fn part2(&self) -> usize {
         println!("{:?}", self.start);
         println!("{:?}", self.end);
-        self
-            .input
+        self.input
             .indices()
             .filter(|&i| self.input[i] == 'a')
             .map(|i| {
@@ -60,14 +59,15 @@ impl Day12 {
                             // .inspect(|p| println!("t {:?}", p))
                             // .inspect(move |&n| println!("t {:?} {} {} {}", n, ('a' as usize),(val as usize + 1), self.input[n] as usize))
                             .filter(move |&n| {
-                                (('a' as usize)..=(val as usize + 1)).contains(&(self.input[n] as usize))
+                                (('a' as usize)..=(val as usize + 1))
+                                    .contains(&(self.input[n] as usize))
                             })
                     },
                     |&p| p == self.end,
                 );
                 match result {
                     Some(r) => r.len() - 1,
-                    None => 99999999
+                    None => 99999999,
                 }
             })
             .min()

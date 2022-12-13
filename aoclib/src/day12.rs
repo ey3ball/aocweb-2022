@@ -90,6 +90,6 @@ abdefghi";
         let parse = Day12::parse(SAMPLE);
         println!("{:#?}", parse.input);
         assert_eq!(parse.part1(), 31);
-        assert_eq!(parse.part2(), 0);
+        assert_eq!(parse.part2(), 29);
     }
 }

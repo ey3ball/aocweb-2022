@@ -1,4 +1,3 @@
-//extern crate nom;
 use nom::{
     branch::alt,
     character::complete::{char, digit1},
@@ -7,14 +6,15 @@ use nom::{
     sequence::delimited,
     IResult,
 };
+use std::cmp::Ordering;
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(Eq, PartialEq, Debug, Clone)]
 enum Packet {
     Integer(usize),
     List(Vec<Packet>),
 }
 
-type Input = Vec<(Packet, Packet)>;
+type Input = Vec<Packet>;
 
 impl Packet {
     fn parse(input: &str) -> IResult<&str, Packet> {
@@ -28,29 +28,53 @@ impl Packet {
         ))(input)?)
     }
 
-    fn compare(&self, other: &Self) -> Option<bool> {
+    fn compare(&self, other: &Self) -> Option<std::cmp::Ordering> {
         match (self, other) {
-            (Packet::Integer(v1), Packet::Integer(v2)) => if v1 == v2 { None } else { Some(v1 < v2) }
-            (Packet::Integer(v1), Packet::List(_)) => Packet::List(vec![Packet::Integer(*v1)]).compare(other),
-            (Packet::List(_), Packet::Integer(v2)) => self.compare(&Packet::List(vec![Packet::Integer(*v2)])),
+            (Packet::Integer(v1), Packet::Integer(v2)) => {
+                if v1 == v2 {
+                    None
+                } else {
+                    Some(v1.cmp(v2))
+                }
+            }
+            (Packet::Integer(v1), Packet::List(_)) => {
+                Packet::List(vec![Packet::Integer(*v1)]).compare(other)
+            }
+            (Packet::List(_), Packet::Integer(v2)) => {
+                self.compare(&Packet::List(vec![Packet::Integer(*v2)]))
+            }
             (Packet::List(v1), Packet::List(v2)) => {
-                let ordered = std::iter::zip(v1.iter(), v2.iter())
-                    .fold(None, |acc, (a,b)| 
-                        match acc {
-                            Some(_) => acc,
-                            None => a.compare(b)
-                        }
-                    );
+                let ordered =
+                    std::iter::zip(v1.iter(), v2.iter()).fold(None, |acc, (a, b)| match acc {
+                        Some(_) => acc,
+                        None => a.compare(b),
+                    });
                 if v1.len() < v2.len() && ordered.is_none() {
-                    Some(true)
+                    Some(Ordering::Less)
                 } else if v1.len() > v2.len() && ordered.is_none() {
-                    Some(false)
+                    Some(Ordering::Greater)
                 } else {
                     ordered
                 }
-            },
-            _ => panic!()
+            }
+            _ => panic!(),
         }
+    }
+}
+
+impl Ord for Packet {
+    fn cmp(&self, other: &Self) -> Ordering {
+        if self == other {
+            Ordering::Equal
+        } else {
+            self.partial_cmp(other).unwrap()
+        }
+    }
+}
+
+impl PartialOrd for Packet {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        self.compare(other)
     }
 }
 
@@ -60,26 +84,33 @@ pub struct Day13 {
 
 impl Day13 {
     pub fn parse(input: &str) -> Day13 {
-        Day13 {
-            input: input.split("\n\n").map(|ll| {
-                let (p1, p2) = ll.split_once('\n').unwrap();
-                (Packet::parse(p1).unwrap().1, Packet::parse(p2).unwrap().1)
-            }).collect(),
-        }
+        let mut input: Vec<Packet> = input
+            .split("\n\n")
+            .flat_map(|ll| ll.lines().map(|l| Packet::parse(l).unwrap().1))
+            .collect();
+
+        input.push(Packet::parse("[[6]]").unwrap().1);
+        input.push(Packet::parse("[[2]]").unwrap().1);
+        Day13 { input }
     }
 
     pub fn part1(&self) -> usize {
         self.input
-            .iter()
+            .chunks(2)
             .enumerate()
-            .inspect(|(i,(a,b))| println!("{} {}",i,a.compare(b).unwrap()))
-            .filter(|(_i,(a,b))| a.compare(b).unwrap())
-            .map(|(i,_)| i+1)
+            .filter(|(_i, cmp)| cmp[0] < cmp[1])
+            .map(|(i, _)| i + 1)
             .sum()
     }
 
     pub fn part2(&self) -> usize {
-        0
+        let mut input = self.input.clone();
+        input.sort();
+        let two = &self.input[self.input.len() - 1];
+        let six = &self.input[self.input.len() - 2];
+        let two = input.iter().position(|e| *e == *two).unwrap();
+        let six = input.iter().position(|e| *e == *six).unwrap();
+        (two + 1) * (six + 1)
     }
 }
 
@@ -143,8 +174,7 @@ mod tests {
     #[test]
     fn solve() {
         let parse = Day13::parse(SAMPLE);
-        println!("{:?}", parse.input);
-        assert_eq!(parse.part1(), 0);
-        assert_eq!(parse.part2(), 0);
+        assert_eq!(parse.part1(), 13);
+        assert_eq!(parse.part2(), 140);
     }
 }

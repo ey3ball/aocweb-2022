@@ -1,7 +1,7 @@
 use itertools::Itertools;
 use std::collections::HashSet;
 
-type Pos = (usize, usize);
+type Pos = (isize, isize);
 type Cave = HashSet<Pos>;
 
 pub struct Day14 {
@@ -34,13 +34,13 @@ pub fn display(cave: &Cave) {
 
 impl Day14 {
     pub fn parse(input: &str) -> Day14 {
-        let walls: HashSet<(usize, usize)> = input
+        let walls: Cave = input
             .lines()
             .flat_map(|l| {
                 l.split(" -> ")
                     .map(|coord| {
                         let (x, y) = coord.split_once(",").unwrap();
-                        (x.parse::<usize>().unwrap(), y.parse::<usize>().unwrap())
+                        (x.parse::<isize>().unwrap(), y.parse::<isize>().unwrap())
                     })
                     .tuple_windows()
                     .flat_map(|((x1, y1), (x2, y2))| {
@@ -53,8 +53,36 @@ impl Day14 {
         Day14 { input: walls }
     }
 
+    pub fn display(&self) {
+        display(&self.input);
+    }
+
     pub fn part1(&self) -> usize {
-        0
+        let mut fill = self.input.clone();
+        let ((xmin, _), (xmax, ymax)) = bounds(&fill);
+        println!("x {:?} {:?} y {:?}", xmin, xmax, ymax);
+        let mut i = 0;
+
+        'outer: loop {
+            let mut pos = (500,0);
+            i += 1;
+            loop {
+                if let Some(new_pos) = [(0,1),(-1,1),(1,1)]
+                    .iter()
+                    .map(|d| (pos.0 + d.0, pos.1 + d.1))
+                    .find(|p| !fill.contains(&p)) {
+                    pos = new_pos;
+
+                    if !((xmin..=xmax).contains(&pos.0)) || pos.1 > ymax {
+                        break 'outer;
+                    }
+                } else {
+                    fill.insert(pos);
+                    break;
+                }
+            }
+        }
+        i - 1
     }
 
     pub fn part2(&self) -> usize {

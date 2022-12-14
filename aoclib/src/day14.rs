@@ -64,13 +64,14 @@ impl Day14 {
         let mut i = 0;
 
         'outer: loop {
-            let mut pos = (500,0);
+            let mut pos = (500, 0);
             i += 1;
             loop {
-                if let Some(new_pos) = [(0,1),(-1,1),(1,1)]
+                if let Some(new_pos) = [(0, 1), (-1, 1), (1, 1)]
                     .iter()
                     .map(|d| (pos.0 + d.0, pos.1 + d.1))
-                    .find(|p| !fill.contains(&p)) {
+                    .find(|p| !fill.contains(&p))
+                {
                     pos = new_pos;
 
                     if !((xmin..=xmax).contains(&pos.0)) || pos.1 > ymax {
@@ -86,7 +87,27 @@ impl Day14 {
     }
 
     pub fn part2(&self) -> usize {
-        0
+        let cave = &self.input;
+        let (_, (_, ymax)) = bounds(&self.input);
+        let ymax = ymax + 2;
+        let mut sand: HashSet<isize> = HashSet::new();
+        let (xmin, xmax) = (500, 500);
+        sand.insert(500);
+        let (_, count, _) = (1..ymax).fold((sand, 1, (xmin, xmax)), |(prev_sand, count, xs), y| {
+            let xs = (xs.0 - 1, xs.1 + 1);
+            let next_sand: HashSet<isize> = (xs.0..=xs.1)
+                .filter(|x| {
+                    (prev_sand.contains(&(x - 1))
+                        || prev_sand.contains(&x)
+                        || prev_sand.contains(&(x + 1)))
+                        && !cave.contains(&(*x, y))
+                })
+                .collect();
+            let count = count + next_sand.len();
+
+            (next_sand, count, xs)
+        });
+        count
     }
 }
 
@@ -102,7 +123,7 @@ mod tests {
     fn solve() {
         let parse = Day14::parse(SAMPLE);
         display(&parse.input);
-        assert_eq!(parse.part1(), 0);
-        assert_eq!(parse.part2(), 0);
+        assert_eq!(parse.part1(), 24);
+        assert_eq!(parse.part2(), 93);
     }
 }
